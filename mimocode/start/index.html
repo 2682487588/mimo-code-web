@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>快速上手 | MiMo Code 文档</title>
+    <meta name="description" content="MiMo Code 快速上手指南 — 安装、配置与核心功能详解。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Questrial&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --color-bg: #fcfaf8;
+        --color-ink: #26251e;
+        --color-ink-soft: #504f49;
+        --color-border: #e8e5e0;
+        --color-accent: #8b6914;
+        --color-sidebar-bg: #f8f6f3;
+        --font-sans: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+        --font-mincho: "Noto Serif SC", "Songti SC", "STSong", Georgia, serif;
+        --font-display: "Questrial", "Century Gothic", "Avenir Next", sans-serif;
+        --font-misans: "MiSans", "PingFang SC", -apple-system, "Microsoft YaHei", sans-serif;
+        --font-mono: "SF Mono", "Fira Code", "JetBrains Mono", monospace;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        background: var(--color-bg);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.8;
+      }
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(252, 250, 248, 0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .header__inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 16px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .header__logo {
+        height: 18px;
+        display: block;
+      }
+
+      .header__nav {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+      }
+
+      .header__nav a {
+        font-family: var(--font-misans);
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--color-ink);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+
+      .header__nav a:hover { opacity: 0.6; }
+
+      .layout {
+        display: flex;
+        max-width: 1400px;
+        margin: 0 auto;
+        min-height: calc(100vh - 65px);
+      }
+
+      .sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        padding: 32px 24px;
+        border-right: 1px solid var(--color-border);
+        background: var(--color-sidebar-bg);
+        position: sticky;
+        top: 65px;
+        height: calc(100vh - 65px);
+        overflow-y: auto;
+      }
+
+      .sidebar__title {
+        font-family: var(--font-misans);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--color-ink-soft);
+        margin-bottom: 16px;
+      }
+
+      .sidebar__list {
+        list-style: none;
+      }
+
+      .sidebar__item {
+        margin-bottom: 4px;
+      }
+
+      .sidebar__link {
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        color: var(--color-ink);
+        text-decoration: none;
+        transition: background 0.15s;
+      }
+
+      .sidebar__link:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+
+      .sidebar__link.is-active {
+        background: rgba(139, 105, 20, 0.08);
+        color: var(--color-accent);
+        font-weight: 500;
+      }
+
+      .content {
+        flex: 1;
+        padding: 48px 64px 120px;
+        max-width: 860px;
+      }
+
+      .content h1 {
+        font-family: var(--font-mincho);
+        font-size: 34px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        line-height: 1.3;
+      }
+
+      .content__lead {
+        font-size: 17px;
+        color: var(--color-ink-soft);
+        margin-bottom: 48px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid var(--color-border);
+        line-height: 1.9;
+      }
+
+      .content h2 {
+        font-family: var(--font-mincho);
+        font-size: 24px;
+        font-weight: 500;
+        margin: 48px 0 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .content h2:first-of-type {
+        border-top: none;
+        padding-top: 0;
+      }
+
+      .content h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 32px 0 12px;
+      }
+
+      .content p {
+        font-size: 15px;
+        line-height: 2;
+        margin-bottom: 16px;
+      }
+
+      .content ul, .content ol {
+        margin: 12px 0 20px 20px;
+        font-size: 15px;
+        line-height: 2;
+      }
+
+      .content li { margin-bottom: 6px; }
+
+      .content code {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        background: #f3f0ef;
+        padding: 2px 7px;
+        border-radius: 4px;
+        color: #c7254e;
+      }
+
+      .content pre {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        border-radius: 8px;
+        padding: 20px 24px;
+        overflow-x: auto;
+        margin: 20px 0;
+        font-size: 13.5px;
+        line-height: 1.7;
+      }
+
+      .content pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+        font-size: inherit;
+      }
+
+      .callout {
+        padding: 16px 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+
+      .callout--tip {
+        background: #f0f9f0;
+        border-left: 3px solid #4caf50;
+      }
+
+      .callout--note {
+        background: #f5f5ff;
+        border-left: 3px solid #5b6abf;
+      }
+
+      .callout--warning {
+        background: #fff8f0;
+        border-left: 3px solid #e6930a;
+      }
+
+      .callout__title {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 24px 0;
+      }
+
+      .feature-card {
+        padding: 20px;
+        border-radius: 8px;
+        background: #f8f6f3;
+        border: 1px solid var(--color-border);
+      }
+
+      .feature-card h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .feature-card p {
+        font-size: 13px;
+        margin: 0;
+        color: var(--color-ink-soft);
+        line-height: 1.7;
+      }
+
+      .footer {
+        background: #f5f4ef;
+        padding: 40px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--color-ink-soft);
+        letter-spacing: 0.5px;
+      }
+
+      @media (max-width: 900px) {
+        .sidebar { display: none; }
+        .content { padding: 32px 20px 80px; }
+        .feature-grid { grid-template-columns: 1fr; }
+        .header__inner { padding: 14px 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__inner">
+        <a href="/mimo-code-web/">
+          <img class="header__logo" src="/mimo-code-web/logo.png" alt="MiMo Code" />
+        </a>
+        <nav class="header__nav">
+          <a href="/mimo-code-web/mimocode/start/">文档</a>
+          <a href="/mimo-code-web/blog/mimo-code-long-horizon/">博客</a>
+          <a href="https://github.com/XiaomiMiMo/MiMo-Code" target="_blank">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar__title">文档</div>
+        <ul class="sidebar__list">
+          <li class="sidebar__item"><a class="sidebar__link is-active" href="#start">快速上手</a></li>
+          <li class="sidebar__item"><a class="sidebar__link" href="#install">安装指南</a></li>
+          <li class="sidebar__item"><a class="sidebar__link" href="#features">核心特性</a></li>
+          <li class="sidebar__item"><a class="sidebar__link" href="#config">配置说明</a></li>
+          <li class="sidebar__item"><a class="sidebar__link" href="#commands">常用命令</a></li>
+          <li class="sidebar__item"><a class="sidebar__link" href="#compose">Compose 模式</a></li>
+          <li class="sidebar__item"><a class="sidebar__link" href="#faq">常见问题</a></li>
+        </ul>
+      </aside>
+
+      <main class="content">
+        <h1 id="start">快速上手</h1>
+        <p class="content__lead">
+          MiMo Code 是面向开发者的新一代 AI 编程助手。支持无限上下文、模型-Agent 协同，帮助你更高效地理解、构建与协作。本文档将帮助你在 5 分钟内完成安装并开始使用。
+        </p>
+
+        <h2 id="install">安装指南</h2>
+
+        <h3>系统要求</h3>
+        <ul>
+          <li>macOS 12+ / Linux (Ubuntu 20.04+, Debian 11+) / Windows 10+ (WSL2)</li>
+          <li>4GB 可用内存</li>
+          <li>网络连接（首次安装需要下载模型索引）</li>
+        </ul>
+
+        <h3>一键安装</h3>
+        <p>打开终端，运行以下命令：</p>
+        <pre><code>curl -fsSL https://mimo.xiaomi.com/install | bash</code></pre>
+
+        <div class="callout callout--tip">
+          <div class="callout__title">💡 提示</div>
+          安装脚本会自动检测你的操作系统和架构，下载对应版本的 MiMo Code CLI 工具。
+        </div>
+
+        <h3>验证安装</h3>
+        <pre><code>mimo --version
+# 输出示例: MiMo Code v1.2.0 (build 2025.06.01)</code></pre>
+
+        <h3>通过包管理器安装</h3>
+        <pre><code># macOS (Homebrew)
+brew install xiaomi/tap/mimo-code
+
+# Arch Linux (AUR)
+yay -S mimo-code
+
+# npm（全局安装 VS Code 扩展 CLI）
+npm install -g @xiaomi/mimo-code</code></pre>
+
+        <h2 id="features">核心特性</h2>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>🧠 无限上下文</h4>
+            <p>自动知识沉淀 + 无损压缩，百万行项目也能精准定位关键信息。</p>
+          </div>
+          <div class="feature-card">
+            <h4>🤖 模型-Agent 协同</h4>
+            <p>大模型负责推理，Agent 负责执行，复杂任务一次完成。</p>
+          </div>
+          <div class="feature-card">
+            <h4>🔄 自进化系统</h4>
+            <p>从你的代码风格和习惯中持续学习，越用越顺手。</p>
+          </div>
+          <div class="feature-card">
+            <h4>🎨 Compose 模式</h4>
+            <p>从想法到产品的一站式交付，工业级代码质量。</p>
+          </div>
+        </div>
+
+        <h2 id="config">配置说明</h2>
+
+        <h3>初始化项目配置</h3>
+        <p>在项目根目录运行初始化命令，生成配置文件：</p>
+        <pre><code>mimo init</code></pre>
+
+        <p>这将创建 <code>.mimo/config.yaml</code> 配置文件：</p>
+        <pre><code># .mimo/config.yaml
+version: 1
+model:
+  default: mimo-pro          # 默认模型
+  fallback: mimo-lite        # 备用模型（离线时使用）
+
+context:
+  max_depth: unlimited       # 上下文深度
+  compression: lossless      # 压缩策略
+  memory: persistent         # 跨会话记忆
+
+agent:
+  auto_execute: true         # Agent 自动执行
+  confirm_destructive: true  # 破坏性操作需确认
+  
+style:
+  language: zh-CN            # 交互语言
+  verbosity: balanced        # 输出详细程度</code></pre>
+
+        <h3>VS Code 集成</h3>
+        <p>安装 VS Code 扩展后，MiMo Code 会自动与编辑器集成：</p>
+        <ol>
+          <li>打开 VS Code 扩展市场，搜索 <code>MiMo Code</code></li>
+          <li>点击安装</li>
+          <li>重启编辑器，侧边栏将出现 MiMo Code 面板</li>
+        </ol>
+
+        <div class="callout callout--note">
+          <div class="callout__title">📝 说明</div>
+          MiMo Code 无需登录即可使用全部基础功能。高级功能（团队协作、云端记忆同步）需要注册账号。
+        </div>
+
+        <h2 id="commands">常用命令</h2>
+
+        <h3>基础交互</h3>
+        <pre><code># 启动交互式会话
+mimo chat
+
+# 单次提问
+mimo ask "解释这个函数的作用"
+
+# 代码审查
+mimo review src/main.ts
+
+# 生成测试
+mimo test src/utils/parser.ts</code></pre>
+
+        <h3>项目级操作</h3>
+        <pre><code># 分析项目架构
+mimo analyze
+
+# 搜索代码（语义搜索）
+mimo search "处理用户认证的逻辑"
+
+# 重构建议
+mimo refactor src/legacy/ --strategy=incremental
+
+# 生成文档
+mimo doc src/api/</code></pre>
+
+        <h3>Agent 模式</h3>
+        <pre><code># 启动 Agent（可执行文件操作）
+mimo agent
+
+# 指定任务目标
+mimo agent --goal "将所有 API 路由从 Express 迁移到 Hono"
+
+# 带审查的 Agent 模式
+mimo agent --review</code></pre>
+
+        <h2 id="compose">Compose 模式</h2>
+
+        <p>Compose 是 MiMo Code 最强大的模式 — 面向产品级交付的端到端开发体验。</p>
+
+        <h3>启动 Compose</h3>
+        <pre><code>mimo compose</code></pre>
+
+        <p>进入 Compose 后，你可以用自然语言描述目标：</p>
+        <pre><code>> 创建一个 REST API 服务，包含用户注册、登录、
+  JWT Token 刷新，使用 PostgreSQL 存储，
+  Docker 部署，完整的单元测试覆盖。</code></pre>
+
+        <p>MiMo Code 将自动：</p>
+        <ol>
+          <li><strong>需求分析</strong> — 理解并拆解任务为可执行的步骤</li>
+          <li><strong>架构设计</strong> — 选择技术栈，规划模块结构</li>
+          <li><strong>代码实现</strong> — 逐模块编写生产级代码</li>
+          <li><strong>测试编写</strong> — 单元测试 + 集成测试</li>
+          <li><strong>部署配置</strong> — Dockerfile、docker-compose、CI 配置</li>
+          <li><strong>验证运行</strong> — 自动运行测试，确保功能正确</li>
+        </ol>
+
+        <div class="callout callout--warning">
+          <div class="callout__title">⚠️ 注意</div>
+          Compose 模式下 Agent 会执行文件写入和命令运行。建议在 Git 管理的项目中使用，以便随时回滚。
+        </div>
+
+        <h2 id="faq">常见问题</h2>
+
+        <h3>Q: MiMo Code 是否免费？</h3>
+        <p>是的。MiMo Code 基础版完全免费，包含顶尖模型的无限制使用。团队协作等高级功能后续将提供付费方案。</p>
+
+        <h3>Q: 支持哪些编程语言？</h3>
+        <p>MiMo Code 支持所有主流编程语言，包括但不限于：TypeScript、JavaScript、Python、Go、Rust、Java、C/C++、Swift、Kotlin 等。对主流框架（React、Vue、Next.js、Django、Spring Boot 等）有深度优化。</p>
+
+        <h3>Q: 代码是否会上传到云端？</h3>
+        <p>MiMo Code 默认仅将当前对话上下文发送到模型服务端进行推理。你可以在配置中开启 <code>privacy.local_only: true</code> 使用本地模型，完全离线工作。</p>
+
+        <h3>Q: 如何更新 MiMo Code？</h3>
+        <pre><code># 自动更新
+mimo update
+
+# 或重新运行安装脚本
+curl -fsSL https://mimo.xiaomi.com/install | bash</code></pre>
+
+        <h3>Q: 遇到问题怎么办？</h3>
+        <p>你可以：</p>
+        <ul>
+          <li>运行 <code>mimo doctor</code> 进行自检</li>
+          <li>查看 <a href="https://github.com/XiaomiMiMo/MiMo-Code/issues" style="color: var(--color-accent);">GitHub Issues</a></li>
+          <li>加入社区讨论获取帮助</li>
+        </ul>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <p>Copyright©2025 Xiaomi. All Rights Reserved</p>
+    </footer>
+
+    <script>
+      // Sidebar active state on scroll
+      (function() {
+        const links = document.querySelectorAll('.sidebar__link');
+        const sections = [];
+        links.forEach(link => {
+          const id = link.getAttribute('href').replace('#', '');
+          const el = document.getElementById(id);
+          if (el) sections.push({ el, link });
+        });
+
+        function update() {
+          const scrollY = window.scrollY + 120;
+          let active = sections[0];
+          for (const s of sections) {
+            if (s.el.offsetTop <= scrollY) active = s;
+          }
+          links.forEach(l => l.classList.remove('is-active'));
+          if (active) active.link.classList.add('is-active');
+        }
+
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+      })();
+    </script>
+  </body>
+</html>

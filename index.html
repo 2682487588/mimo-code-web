@@ -976,7 +976,7 @@
       <div class="hero__bg" aria-hidden="true"></div>
       <canvas class="hero__mask" id="heroMask" aria-hidden="true"></canvas>
 
-      <a class="hero__logo-link" id="navHome" href="/" target="_top" aria-label="MiMo">
+      <a class="hero__logo-link" id="navHome" href="/mimo-code-web/" target="_top" aria-label="MiMo">
         <img class="hero__logo" src="logo.png" alt="Xiaomi MiMo" width="120" />
       </a>
 
@@ -992,13 +992,13 @@
               </svg>
             </button>
             <div class="hero__nav-menu" role="menu">
-              <a class="hero__nav-menu-item" id="navMiMoCode" href="/mimocode" target="_top" role="menuitem">
+              <a class="hero__nav-menu-item" id="navMiMoCode" href="/mimo-code-web/mimocode/start/" target="_top" role="menuitem">
                 MiMo Code
               </a>
             </div>
           </div>
-          <a class="hero__nav-link" id="navBlog" href="/#blog" target="_top" data-i18n="navBlog">博客</a>
-          <a class="hero__nav-link" id="navJoinUs" href="/#joinUs" target="_top" data-i18n="navJoinUs">加入我们</a>
+          <a class="hero__nav-link" id="navBlog" href="/mimo-code-web/blog/mimo-code-long-horizon/" target="_top" data-i18n="navBlog">博客</a>
+          <a class="hero__nav-link" id="navJoinUs" href="/mimo-code-web/#joinUs" target="_top" data-i18n="navJoinUs">加入我们</a>
         </nav>
 
         <div class="hero__lang hero__nav-dropdown">
@@ -1049,14 +1049,14 @@
               <path d="M3.848 12.152L12.3333 3.66665" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </a>
-          <a class="btn" id="docsBtn" href="/mimocode/start" target="_top">
+          <a class="btn" id="docsBtn" href="/mimo-code-web/mimocode/start/" target="_top">
             <span data-i18n="navDocs">文档</span>
             <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
               <path d="M6.3333 3.66665H12.3333V9.66665" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M3.848 12.152L12.3333 3.66665" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </a>
-          <a class="btn btn--primary" id="blogBtn" href="/blog/mimo-code-long-horizon" target="_top">
+          <a class="btn btn--primary" id="blogBtn" href="/mimo-code-web/blog/mimo-code-long-horizon/" target="_top">
             Blog
             <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
               <path d="M6.3333 3.66665H12.3333V9.66665" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
@@ -1496,25 +1496,17 @@
           });
           const docsBtn = document.getElementById("docsBtn");
           if (docsBtn) {
-            docsBtn.setAttribute(
-              "href",
-              lang === "zh" ? "/mimocode/start" : "/mimocode/start"
-            );
+            docsBtn.setAttribute("href", "/mimo-code-web/mimocode/start/");
           }
           const blogBtn = document.getElementById("blogBtn");
           if (blogBtn) {
-            blogBtn.setAttribute(
-              "href",
-              lang === "zh"
-                ? "/blog/mimo-code-long-horizon"
-                : "/blog/mimo-code-long-horizon"
-            );
+            blogBtn.setAttribute("href", "/mimo-code-web/blog/mimo-code-long-horizon/");
           }
-          const prefix = lang === "zh" ? "" : "";
+          const prefix = "/mimo-code-web";
           const navLinks = {
             navHome: prefix + "/",
-            navMiMoCode: prefix + "/mimocode",
-            navBlog: prefix + "/#blog",
+            navMiMoCode: prefix + "/mimocode/start/",
+            navBlog: prefix + "/blog/mimo-code-long-horizon/",
             navJoinUs: prefix + "/#joinUs",
           };
           Object.entries(navLinks).forEach(([id, href]) => {

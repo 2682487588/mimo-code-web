@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MiMo Code：面向长周期复杂任务的 AI 编程助手 | Blog</title>
+    <meta name="description" content="深入解析 MiMo Code 如何通过无限上下文、模型-Agent协同和自进化系统，解决长周期复杂编程任务。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Questrial&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --color-bg: #fcfaf8;
+        --color-ink: #26251e;
+        --color-ink-soft: #504f49;
+        --color-border: #e8e5e0;
+        --color-accent: #8b6914;
+        --font-sans: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+        --font-mincho: "Noto Serif SC", "Songti SC", "STSong", Georgia, serif;
+        --font-display: "Questrial", "Century Gothic", "Avenir Next", sans-serif;
+        --font-misans: "MiSans", "PingFang SC", -apple-system, "Microsoft YaHei", sans-serif;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        background: var(--color-bg);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.8;
+      }
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(252, 250, 248, 0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .header__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 16px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .header__logo {
+        height: 18px;
+        display: block;
+      }
+
+      .header__nav {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+      }
+
+      .header__nav a {
+        font-family: var(--font-misans);
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--color-ink);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+
+      .header__nav a:hover { opacity: 0.6; }
+
+      .article {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 80px 40px 120px;
+      }
+
+      .article__meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+        font-size: 14px;
+        color: var(--color-ink-soft);
+        font-family: var(--font-misans);
+      }
+
+      .article__tag {
+        padding: 4px 12px;
+        background: #f3f0ef;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .article__title {
+        font-family: var(--font-mincho);
+        font-size: 38px;
+        font-weight: 700;
+        line-height: 1.4;
+        margin-bottom: 24px;
+        letter-spacing: -0.5px;
+      }
+
+      .article__lead {
+        font-size: 18px;
+        line-height: 1.9;
+        color: var(--color-ink-soft);
+        margin-bottom: 48px;
+        padding-bottom: 48px;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .article h2 {
+        font-family: var(--font-mincho);
+        font-size: 26px;
+        font-weight: 500;
+        margin: 56px 0 20px;
+        line-height: 1.4;
+      }
+
+      .article h3 {
+        font-family: var(--font-mincho);
+        font-size: 20px;
+        font-weight: 500;
+        margin: 40px 0 16px;
+      }
+
+      .article p {
+        font-size: 16px;
+        line-height: 2;
+        margin-bottom: 20px;
+        color: var(--color-ink);
+      }
+
+      .article ul, .article ol {
+        margin: 16px 0 24px 24px;
+        font-size: 16px;
+        line-height: 2;
+      }
+
+      .article li { margin-bottom: 8px; }
+
+      .article code {
+        font-family: "SF Mono", "Fira Code", monospace;
+        font-size: 14px;
+        background: #f3f0ef;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+
+      .article pre {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        border-radius: 8px;
+        padding: 24px;
+        overflow-x: auto;
+        margin: 24px 0;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .article pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+      }
+
+      .article blockquote {
+        border-left: 3px solid var(--color-accent);
+        padding: 16px 24px;
+        margin: 24px 0;
+        background: #faf8f5;
+        border-radius: 0 8px 8px 0;
+        font-style: italic;
+        color: var(--color-ink-soft);
+      }
+
+      .article__divider {
+        width: 60px;
+        height: 2px;
+        background: var(--color-border);
+        margin: 56px auto;
+      }
+
+      .footer {
+        background: #f5f4ef;
+        padding: 40px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--color-ink-soft);
+        letter-spacing: 0.5px;
+      }
+
+      .footer a {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      @media (max-width: 640px) {
+        .article { padding: 48px 20px 80px; }
+        .article__title { font-size: 26px; }
+        .article h2 { font-size: 22px; }
+        .header__inner { padding: 14px 20px; }
+        .header__nav { gap: 20px; }
+        .header__nav a { font-size: 13px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__inner">
+        <a href="/mimo-code-web/">
+          <img class="header__logo" src="/mimo-code-web/logo.png" alt="MiMo Code" />
+        </a>
+        <nav class="header__nav">
+          <a href="/mimo-code-web/mimocode/start/">文档</a>
+          <a href="/mimo-code-web/blog/mimo-code-long-horizon/">博客</a>
+          <a href="https://github.com/XiaomiMiMo/MiMo-Code" target="_blank">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <article class="article">
+      <div class="article__meta">
+        <span class="article__tag">技术博客</span>
+        <time>2025 年 6 月</time>
+        <span>MiMo Code Team</span>
+      </div>
+
+      <h1 class="article__title">MiMo Code：面向长周期复杂任务的 AI 编程助手</h1>
+
+      <p class="article__lead">
+        当代码规模超过百万行，当任务跨越数天甚至数周，传统的 AI 编程助手往往力不从心。MiMo Code 从架构层面重新思考了「AI 如何理解和参与大型工程」这一命题，提出了无限上下文、模型-Agent 协同和自进化系统三大核心能力。
+      </p>
+
+      <h2>一、问题：长周期任务的挑战</h2>
+
+      <p>现有的 AI 编程工具在处理简短的代码片段时表现出色，但面对真实的工程场景，它们往往遇到以下瓶颈：</p>
+
+      <ul>
+        <li><strong>上下文窗口有限</strong> — 大型项目的代码量远超模型的上下文容量，关键信息被截断或遗忘。</li>
+        <li><strong>任务链断裂</strong> — 跨文件、跨模块的修改缺乏全局视角，局部优化可能引入全局缺陷。</li>
+        <li><strong>知识静止</strong> — 模型无法从项目的演进历史中学习，每次对话都从零开始。</li>
+      </ul>
+
+      <p>这些问题在长周期复杂任务中被急剧放大。一个持续数周的重构任务、一次涉及数十个文件的架构升级，都对 AI 助手提出了远超当前能力边界的要求。</p>
+
+      <h2>二、无限上下文：知识的自动沉淀与无损压缩</h2>
+
+      <p>MiMo Code 的核心突破之一是<strong>无限上下文</strong>机制。不同于简单地扩大窗口或截断历史，我们采用了一套分层的知识管理架构：</p>
+
+      <h3>2.1 分层记忆体系</h3>
+
+      <p>MiMo Code 将项目知识分为三层：</p>
+
+      <ol>
+        <li><strong>即时上下文</strong> — 当前对话窗口中的活跃信息</li>
+        <li><strong>项目记忆</strong> — 自动从历史对话中提取的结构化知识图谱</li>
+        <li><strong>工程图谱</strong> — 代码库的全局依赖关系、架构模式和约定规范</li>
+      </ol>
+
+      <p>这三层记忆协同工作，确保即使在第 100 轮对话中，MiMo Code 依然能精准定位两周前讨论过的设计决策。</p>
+
+      <h3>2.2 无损压缩算法</h3>
+
+      <p>当上下文接近容量上限时，MiMo Code 不会简单地丢弃旧信息。我们的压缩算法会：</p>
+
+      <ul>
+        <li>识别信息密度，保留高价值片段的原始形态</li>
+        <li>将低密度叙述转化为结构化摘要</li>
+        <li>维护引用链，确保压缩后的信息仍可追溯原始来源</li>
+      </ul>
+
+      <blockquote>
+        百万行级项目也不丢一行关键信息，质量始终在线。
+      </blockquote>
+
+      <h2>三、模型-Agent 协同：1+1 &gt; 2</h2>
+
+      <p>MiMo Code 不是一个简单的「模型套壳」产品。我们将大语言模型与专业化 Agent 系统深度融合，形成了一套协同工作的架构。</p>
+
+      <h3>3.1 角色分工</h3>
+
+      <p>在 MiMo Code 中：</p>
+
+      <ul>
+        <li><strong>模型</strong>负责理解意图、推理方案、生成代码</li>
+        <li><strong>Agent</strong>负责执行操作、管理文件系统、运行测试、调用工具链</li>
+      </ul>
+
+      <p>两者之间通过精心设计的协议进行通信，Agent 为模型提供精确的上下文信息，模型为 Agent 规划执行策略。</p>
+
+      <h3>3.2 复杂任务一次搞定</h3>
+
+      <p>以一个典型场景为例 — 将一个 Express.js 后端从 JavaScript 迁移到 TypeScript：</p>
+
+      <pre><code># MiMo Code 会自动执行以下步骤：
+1. 分析项目结构和依赖关系
+2. 生成 tsconfig.json 配置
+3. 逐文件转换，保持类型安全
+4. 更新 package.json 和构建脚本
+5. 运行测试验证功能完整性
+6. 生成迁移报告</code></pre>
+
+      <p>整个过程中，模型负责理解每个文件的语义和类型关系，Agent 负责文件操作和验证 — 协同完成了人工可能需要数天的工作。</p>
+
+      <h2>四、自进化系统：越用越懂你</h2>
+
+      <p>MiMo Code 不是一个静态工具，它是一个持续进化的系统。</p>
+
+      <h3>4.1 反馈驱动优化</h3>
+
+      <p>每一次使用都是一次学习机会。MiMo Code 会从你的代码风格、架构偏好、命名习惯中提取模式，逐步形成对你和你项目的深度理解。</p>
+
+      <h3>4.2 工具链共同成长</h3>
+
+      <p>随着项目的演进，MiMo Code 的能力边界也在扩展：</p>
+
+      <ul>
+        <li>新的工具集成会根据项目需求自动推荐</li>
+        <li>工作流模板会随着最佳实践的积累而更新</li>
+        <li>模型的响应策略会根据历史交互模式进行微调</li>
+      </ul>
+
+      <div class="article__divider"></div>
+
+      <h2>五、Compose 模式：一个人的专业开发团队</h2>
+
+      <p>Compose 模式是 MiMo Code 面向产品级交付的终极形态。在这个模式下，你只需要描述最终目标，MiMo Code 会像一个完整的开发团队一样工作：</p>
+
+      <ul>
+        <li><strong>架构师</strong> — 分析需求，设计系统架构</li>
+        <li><strong>开发工程师</strong> — 编写高质量实现代码</li>
+        <li><strong>测试工程师</strong> — 编写测试，验证正确性</li>
+        <li><strong>DevOps</strong> — 配置构建、部署和 CI/CD</li>
+      </ul>
+
+      <p>从想法到可运行的产品，工业级交付质量，一人即团队。</p>
+
+      <h2>六、开始使用</h2>
+
+      <p>MiMo Code 现已开放免费体验。无需登录，一行命令即可开始：</p>
+
+      <pre><code>curl -fsSL https://mimo.xiaomi.com/install | bash</code></pre>
+
+      <p>更多信息请访问 <a href="/mimo-code-web/mimocode/start/" style="color: var(--color-accent);">快速上手文档</a> 或前往 <a href="https://github.com/XiaomiMiMo/MiMo-Code" style="color: var(--color-accent);" target="_blank">GitHub 仓库</a>。</p>
+    </article>
+
+    <footer class="footer">
+      <p>Copyright©2025 Xiaomi. All Rights Reserved</p>
+    </footer>
+  </body>
+</html>
